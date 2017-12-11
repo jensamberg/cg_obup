@@ -102,11 +102,19 @@ void nonce(uint64_t addr, uint64_t nonce, uint64_t cachepos) {
         *start ^= fint[1]; start++;
         *start ^= fint[2]; start++;
         *start ^= fint[3]; start++;
-    }
+    }	
 
     // Sort them:
-    for (uint32_t i = 0; i < NONCE_SIZE; i += SCOOP_SIZE)
-        memmove(&cache[cachepos * SCOOP_SIZE + (uint64_t)i * staggersize], &gendata[i], SCOOP_SIZE);
+    // PoC2
+    uint64_t revPosition = NONCE_SIZE-SCOOP_SIZE;
+    for (uint32_t i = 0; i < NONCE_SIZE; i += SCOOP_SIZE){
+        memmove(&cache[cachepos * SCOOP_SIZE + (uint64_t)i * staggersize], &gendata[i], 32);
+        memmove(&cache[cachepos * SCOOP_SIZE + 32 + revPosition * staggersize], &gendata[i+32], 32);
+        revPosition -= SCOOP_SIZE;
+    }
+    // PoC1
+    // for (uint32_t i = 0; i < NONCE_SIZE; i += SCOOP_SIZE)
+    //    memmove(&cache[cachepos * SCOOP_SIZE + (uint64_t)i * staggersize], &gendata[i], SCOOP_SIZE);
 }
 
 /* }}} */
@@ -161,12 +169,27 @@ mnonce(uint64_t addr,
     }
 
     // Sort them:
+    // PoC2
+    uint64_t revPosition = NONCE_SIZE-SCOOP_SIZE;
     for (int i = 0; i < NONCE_SIZE; i += 64) {
-        memmove(&cache[cachepos1 * 64 + (uint64_t)i * staggersize], &gendata1[i], 64);
-        memmove(&cache[cachepos2 * 64 + (uint64_t)i * staggersize], &gendata2[i], 64);
-        memmove(&cache[cachepos3 * 64 + (uint64_t)i * staggersize], &gendata3[i], 64);
-        memmove(&cache[cachepos4 * 64 + (uint64_t)i * staggersize], &gendata4[i], 64);
+        memmove(&cache[cachepos1 * 64 + (uint64_t)i * staggersize], &gendata1[i], 32);
+        memmove(&cache[cachepos2 * 64 + (uint64_t)i * staggersize], &gendata2[i], 32);
+        memmove(&cache[cachepos3 * 64 + (uint64_t)i * staggersize], &gendata3[i], 32);
+        memmove(&cache[cachepos4 * 64 + (uint64_t)i * staggersize], &gendata4[i], 32);
+        memmove(&cache[cachepos1 * 64 + 32 + revPosition * staggersize], &gendata1[i+32], 32);
+        memmove(&cache[cachepos2 * 64 + 32 + revPosition * staggersize], &gendata2[i+32], 32);
+        memmove(&cache[cachepos3 * 64 + 32 + revPosition * staggersize], &gendata3[i+32], 32);
+        memmove(&cache[cachepos4 * 64 + 32 + revPosition * staggersize], &gendata4[i+32], 32);
+        revPosition -= SCOOP_SIZE;
     }
+
+    // PoC1
+    // for (int i = 0; i < NONCE_SIZE; i += 64) {
+    //     memmove(&cache[cachepos1 * 64 + (uint64_t)i * staggersize], &gendata1[i], 64);
+    //     memmove(&cache[cachepos2 * 64 + (uint64_t)i * staggersize], &gendata2[i], 64);
+    //     memmove(&cache[cachepos3 * 64 + (uint64_t)i * staggersize], &gendata3[i], 64);
+    //     memmove(&cache[cachepos4 * 64 + (uint64_t)i * staggersize], &gendata4[i], 64);
+    // }
 
     return 0;
 }
@@ -245,16 +268,39 @@ m256nonce(uint64_t addr,
     }
 
     // Sort them:
+    // PoC2
+    uint64_t revPosition = NONCE_SIZE-SCOOP_SIZE;
     for (int i = 0; i < NONCE_SIZE; i += 64) {
-      memmove(&cache[cachepos * 64 +       (uint64_t)i * staggersize], &gendata1[i], 64);
-      memmove(&cache[cachepos * 64 +  64 + (uint64_t)i * staggersize], &gendata2[i], 64);
-      memmove(&cache[cachepos * 64 + 128 + (uint64_t)i * staggersize], &gendata3[i], 64);
-      memmove(&cache[cachepos * 64 + 192 + (uint64_t)i * staggersize], &gendata4[i], 64);
-      memmove(&cache[cachepos * 64 + 256 + (uint64_t)i * staggersize], &gendata5[i], 64);
-      memmove(&cache[cachepos * 64 + 320 + (uint64_t)i * staggersize], &gendata6[i], 64);
-      memmove(&cache[cachepos * 64 + 384 + (uint64_t)i * staggersize], &gendata7[i], 64);
-      memmove(&cache[cachepos * 64 + 448 + (uint64_t)i * staggersize], &gendata8[i], 64);
+        memmove(&cache[cachepos * 64 +       (uint64_t)i * staggersize], &gendata1[i], 32);
+        memmove(&cache[cachepos * 64 +  64 + (uint64_t)i * staggersize], &gendata2[i], 32);
+        memmove(&cache[cachepos * 64 + 128 + (uint64_t)i * staggersize], &gendata3[i], 32);
+        memmove(&cache[cachepos * 64 + 192 + (uint64_t)i * staggersize], &gendata4[i], 32);
+        memmove(&cache[cachepos * 64 + 256 + (uint64_t)i * staggersize], &gendata5[i], 32);
+        memmove(&cache[cachepos * 64 + 320 + (uint64_t)i * staggersize], &gendata6[i], 32);
+        memmove(&cache[cachepos * 64 + 384 + (uint64_t)i * staggersize], &gendata7[i], 32);
+        memmove(&cache[cachepos * 64 + 448 + (uint64_t)i * staggersize], &gendata8[i], 32);
+        memmove(&cache[cachepos * 64 +     + 32 + revPosition * staggersize], &gendata1[i+32], 32);
+        memmove(&cache[cachepos * 64 +  64 + 32 + revPosition * staggersize], &gendata2[i+32], 32);
+        memmove(&cache[cachepos * 64 + 128 + 32 + revPosition * staggersize], &gendata3[i+32], 32);
+        memmove(&cache[cachepos * 64 + 192 + 32 + revPosition * staggersize], &gendata4[i+32], 32);
+        memmove(&cache[cachepos * 64 + 256 + 32 + revPosition * staggersize], &gendata5[i+32], 32);
+        memmove(&cache[cachepos * 64 + 320 + 32 + revPosition * staggersize], &gendata6[i+32], 32);
+        memmove(&cache[cachepos * 64 + 384 + 32 + revPosition * staggersize], &gendata7[i+32], 32);
+        memmove(&cache[cachepos * 64 + 448 + 32 + revPosition * staggersize], &gendata8[i+32], 32);
+        revPosition -= SCOOP_SIZE;
     }
+    // PoC1
+    // for (int i = 0; i < NONCE_SIZE; i += 64) {
+    //   memmove(&cache[cachepos * 64 +       (uint64_t)i * staggersize], &gendata1[i], 64);
+    //   memmove(&cache[cachepos * 64 +  64 + (uint64_t)i * staggersize], &gendata2[i], 64);
+    //   memmove(&cache[cachepos * 64 + 128 + (uint64_t)i * staggersize], &gendata3[i], 64);
+    //   memmove(&cache[cachepos * 64 + 192 + (uint64_t)i * staggersize], &gendata4[i], 64);
+    //   memmove(&cache[cachepos * 64 + 256 + (uint64_t)i * staggersize], &gendata5[i], 64);
+    //   memmove(&cache[cachepos * 64 + 320 + (uint64_t)i * staggersize], &gendata6[i], 64);
+    //   memmove(&cache[cachepos * 64 + 384 + (uint64_t)i * staggersize], &gendata7[i], 64);
+    //   memmove(&cache[cachepos * 64 + 448 + (uint64_t)i * staggersize], &gendata8[i], 64);
+    // }
+  
 
     return 0;
 }
