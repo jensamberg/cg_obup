@@ -1,17 +1,13 @@
-#CG_OBUP
+#ENGRAVER
 =============
 
-[![Build Status](https://travis-ci.org/jake-b/cg_obup.svg?branch=master)](https://travis-ci.org/jake-b/cg_obup)
+This is the PoCC reference plotter for Burstcoin.
 
-This is the CryptoGuru Optimized BURSTcoin Plotter -
-a BURST coin plotter that generates optimized plot files
-without the need to run an optimizer after plotting.
+It generates PoC2 files and is intended to work on any UNIX system
+with a sufficiently sane filesystem (able to pre-allocate space), but
+for now only Linux and MacOS has been tested. 64bit only!
 
-It is intended to work on any UNIX system with a sufficiently sane
-filesystem (able to pre-allocate space), but for now only Linux
-and MacOS has been tested. 64bit only!
-
-dcct -> mdcct -> omdcct -> cg_obup
+dcct -> mdcct -> omdcct -> cg_obup -> engraver
 
 This version has some heritage and several people worked on
 the code base until the result was what you see here.
@@ -30,14 +26,14 @@ rico666 <bots@cryptoguru.org>                 (Don't donate)
 
 
 ### Installing
-    git clone https://github.com/PoC-Consortium/cg_obup
-    cd cg_obup
+    git clone https://github.com/PoC-Consortium/engraver
+    cd engraver
     make
 
 ### Usage:
 
 ```bash
-./plot64 -k KEY [-x <core>] [-d <dir>] [-s <startnonce>] [-n <nonces>] [-m <staggersize>] [-t <threads>] [-a]
+./plot64 -k KEY [-x <core>] [-d <dir>] [-s <startnonce>] [-n <nonces>] [-m <staggersize>] [-t <threads>] [-a] [-D]
   -a
     Flag to use asynchronous writing mode. If this is set, the plotter can work
     even while data is being written to disk. It will give you more speed at the
@@ -101,6 +97,10 @@ rico666 <bots@cryptoguru.org>                 (Don't donate)
     error. You can assume a roughly 2x speed increase default->SSE4->AVX2 with
     AVX2 being roughly 4x faster than default. See also "Notes" below!
 
+  -D
+    Use Direct I/O to avoid making the system very slow by flushing the buffer
+    cache.
+
  ```
 
 ###### Notes
@@ -161,5 +161,6 @@ When mining it is recommended to add the option ```ro``` to avoid sudden damages
 
 ### TODO:
 
-* thorough test suite
+* GPU support
 * optimizations
+* BFS support
